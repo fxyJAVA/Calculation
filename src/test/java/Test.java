@@ -1,28 +1,9 @@
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 
 public class Test {
-    @org.junit.Test
-    public void test() {
-        Utils utils = new Utils();
-        String[] s = {"+","-","*"};
-    }
-
-    @org.junit.Test
-    public void test1(){
-        int num0 = 0;
-        int num12 = 0;
-        for (int i=0;i<100;i++) {
-            if((int)(Math.random()*3) == 0) {
-                num0++;
-                continue;
-            }
-            num12++;
-        }
-        System.out.println("num0:"+num0);
-        System.out.println("num12:"+num12);
-    }
 
     @org.junit.Test
     public void testAdd(){
@@ -89,7 +70,6 @@ public class Test {
         System.out.println("乘加减："+new Utils().createFun(new String[]{"*","+","-"},100));
         System.out.println("减加乘："+new Utils().createFun(new String[]{"-","+","*"},100));
 
-
         System.out.println("乘除减："+new Utils().createFun(new String[]{"*","÷","-"},100));
         System.out.println("乘减除："+new Utils().createFun(new String[]{"*","-","÷"},100));
         System.out.println("减除乘："+new Utils().createFun(new String[]{"-","÷","*"},100));
@@ -108,13 +88,20 @@ public class Test {
     @org.junit.Test
     public void testCreateSuanShi() {
         Utils utils = new Utils();
-        utils.createSuanShi(10000,100);
-//        FileUtils.creatFile(utils.createSuanShi(10,100));
+        Map<String,String> map = Utils.createSuanShi(10,1);
+        System.out.println(map.size());
+        for (Object entry : map.entrySet()) {
+            Map.Entry<String, String> temp = (Map.Entry<String, String>) entry;
+            String key = temp.getKey();
+            String value = temp.getValue();
+            System.out.println(value+"="+key);
+        }
+//        FileUtils.creatFile(utils.createSuanShi(10,10));
     }
 
 
     @org.junit.Test
-    public void ss() throws IOException {
+    public void ss() {
         LocalDateTime time = LocalDateTime.now();
         String timeFor = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
         System.out.println(timeFor);
@@ -123,18 +110,24 @@ public class Test {
     @org.junit.Test
     public void testCheck() {
         try {
-            FileUtils.check("C:\\Users\\hp\\Desktop\\Exercises@2018-09-29_11-15-45.txt","C:\\Users\\hp\\Desktop\\myanswer.txt");
+            FileUtils.check("D:\\Exercises@2018-09-29_17-25-05.txt","D:\\11.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @org.junit.Test
+    public void testMain(){
+//        main.main(new String[]{"-n", "10", "-r", "10"});
+        main.main(new String[]{"-e", "D:\\Exercises@2018-09-29_20-40-16.txt", "-a", "D:\\11.txt"});
+    }
+    @org.junit.Test
     public void ttt(){
         String s = "1.    20";
         System.out.println(s.contains("."));
         System.out.println(s.split("\\.").length);
         System.out.println(s.split("\\.")[0]);
+		System.out.println(s.split("\\.")[1]);
     }
 
     @org.junit.Test
@@ -154,20 +147,5 @@ public class Test {
 //            System.out.println(c);
 //        }
 //        System.out.println(Arrays.toString(s));
-    }
-
-    @org.junit.Test
-    public void test3() {
-        int zero = 0;
-        int notZero = 0;
-        for (int i=0;i<100;i++) {
-            if((int)(Math.random()*100) == 0) {
-                zero++;
-            } else {
-                notZero++;
-            }
-        }
-        System.out.println("zero:"+zero);
-        System.out.println("notZero:"+notZero);
     }
 }

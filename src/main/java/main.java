@@ -1,28 +1,59 @@
+import java.io.IOException;
+
 public class main {
 
     public static void main(String[] args) {
-        //"-n指令"
-        if(args[0].equals("-n") && args.length==2) {
-            try {
-             int num = Integer.parseInt(args[1]);
-             FileUtils.creatFile(Utils.createSuanShi(num,100));
-            }catch (NumberFormatException e) {
-                System.out.println("输入了非法数据");
-                System.exit(0);
+        int num = 0;
+        int size = 0;
+        String exercisePath = null;
+        String answerPath = null;
+        if(args.length != 0){
+            for(int i = 0; i < args.length; i++){
+                //"-n指令"
+                if(args[i].equals("-n")) {
+                    try {
+                        num = Integer.parseInt(args[i+1]);
+                    }catch (NumberFormatException e) {
+                        System.out.println("参数有误!");
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        System.out.println("参数有误!");
+                    }
+                }
+                //"-r指令"
+                if(args[i].equals("-r")) {
+                    try {
+                        size = Integer.parseInt(args[i+1]);
+                    }catch (NumberFormatException e) {
+                        System.out.println("参数有误!");
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        System.out.println("参数有误!");
+                    }
+                }
+                if(args[i].equals("-e")){
+                    try{
+                        exercisePath = args[i+1];
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        System.out.println("参数有误!");
+                    }
+                }
+                if(args[i].equals("-a")){
+                    try{
+                        answerPath = args[i+1];
+                    }catch (ArrayIndexOutOfBoundsException e){
+                        System.out.println("参数有误!");
+                    }
+                }
             }
-           System.exit(0);
-        }
-
-        //"-r指令"
-        if(args[0].equals("-r") && args.length==2) {
-            try {
-                int num = Integer.parseInt(args[0]);
-                FileUtils.creatFile(Utils.createSuanShi(10,num));
-            }catch (NumberFormatException e) {
-                System.out.println("输入了非法数据");
-                System.exit(0);
+            if(num != 0 && size != 0){
+                FileUtils.creatFile(Utils.createSuanShi(num,size));
             }
-            System.exit(0);
+            if(exercisePath != null && answerPath != null){
+                try {
+                    FileUtils.check(exercisePath,answerPath);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

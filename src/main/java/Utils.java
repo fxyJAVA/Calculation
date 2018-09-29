@@ -73,7 +73,6 @@ public class Utils {
                 }
             }
             weWant.put(result[1], result[0]);
-            System.out.println(result[0] + "=" + result[1]);
         }
         return weWant;
     }
@@ -242,10 +241,10 @@ public class Utils {
     }
 
     private static Fraction createFra(int size) {
-        if ((int) (Math.random() * 3) == 10) {
-            return new Fraction((int) (Math.random() * size), (int) (Math.random() * size) + 2);
+        if ((int) (Math.random() * 3) == 0) {
+            return new Fraction((int) (Math.random() * size + 1), (int) (Math.random() * size) + 2);
         } else {
-            return new Fraction((int) (Math.random() * size), 1);
+            return new Fraction((int) (Math.random() * size + 1), 1);
         }
     }
 }

@@ -8,8 +8,8 @@ public class FileUtils {
     public static void creatFile(HashMap map) {
         LocalDateTime time = LocalDateTime.now();
         String timeFor = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-        File question = new File("C:\\Users\\hp\\Desktop\\Exercises@"+timeFor+".txt");
-        File answer = new File("C:\\Users\\hp\\Desktop\\Answers@"+timeFor +".txt");
+        File question = new File("D:\\Exercises@"+timeFor+".txt");
+        File answer = new File("D:\\Answers@"+timeFor +".txt");
         try {
             question.createNewFile();
             answer.createNewFile();
@@ -39,7 +39,7 @@ public class FileUtils {
 
     public static void check(String question,String yourAnswer) throws IOException {
         String answers = question.split("@")[1];
-        File answersOff =  new File("C:\\Users\\hp\\Desktop\\Answers@"+answers);
+        File answersOff =  new File("D:\\Answers@"+answers);
         File yourAnswers = new File(yourAnswer);
         if(!yourAnswers.exists()) {
             System.out.println("未找到文件，请重新确认文件路径");
@@ -51,7 +51,7 @@ public class FileUtils {
         }
         LocalDateTime time = LocalDateTime.now();
         String timeFor = time.format(DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss"));
-        File grade = new File("C:\\Users\\hp\\Desktop\\Grade@"+timeFor+".txt");
+        File grade = new File("D:\\Grade@"+timeFor+".txt");
         grade.createNewFile();
         try(BufferedReader answersOffReader = new BufferedReader(new FileReader(answersOff));
             BufferedReader yourAnswersReader = new BufferedReader(new FileReader(yourAnswers));
@@ -102,6 +102,8 @@ public class FileUtils {
             gradeWrite.write("Correct:"+right+r.toString());
             gradeWrite.write("\r\n");
             gradeWrite.write("Wrong:"+wrong+w.toString());
+            System.out.println("Correct:"+right+r.toString());
+            System.out.println("Wrong:"+wrong+w.toString());
         }
     }
 

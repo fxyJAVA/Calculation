@@ -84,7 +84,4 @@ public class Fraction {
 		Fraction result = new Fraction(newNumerator,newDenominator);
 		return result;
 	}
-
-
-
 }
