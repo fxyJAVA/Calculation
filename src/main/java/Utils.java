@@ -1,210 +1,251 @@
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 public class Utils {
-    public void twoNums(String op) {
-        int a = (int) (Math.random() * 100);
-        int b = (int) (Math.random() * 100);
-        String equation;
-        if (op.equals("-") && a < b)
-            equation = b + op + a;
-        else
-            equation = a + " " + op + " " + b;
-        System.out.println(equation);
-    }
-
-    public void threeNums(String op1, String op2) {
-        int a = (int) (Math.random() * 100);
-        int b = (int) (Math.random() * 100);
-
-    }
-
-    public void fourNum(String[] op) {
-        //默认没有乘除，暂不考虑括号
-        boolean flag = false;
-        String result = "";
-        String tempSuanShi;
-        StringBuffer suanShi = new StringBuffer();
-        if (Arrays.asList(op).contains("*") || Arrays.asList(op).contains("÷"))
-            flag = true;
-        if (flag) {
-            for (String s : op) {
-                switch (s) {
-                    case "*": {
-                        result = xo(suanShi,"*",result);
-                        tempSuanShi = suanShi.toString();
+    public static HashMap<String, String> createSuanShi(int createNum, int size) {
+        if (size == 0) {
+            size = 100;
+        }
+        HashMap<String, String> weWant = new LinkedHashMap<>();
+        while (weWant.size() < createNum) {
+            int opNum = (int) (Math.random() * 3) + 1;
+            String[] op = new String[opNum];
+            for (int j = 0; j < opNum; j++) {
+                int temp = (int) (Math.random() * 4);
+                switch (temp) {
+                    case 0: {
+                        op[j] = "+";
                         break;
                     }
-                    case "÷": {
-                        result = xo(suanShi,"÷",result);
-                        tempSuanShi = suanShi.toString();
+                    case 1: {
+                        op[j] = "-";
+                        break;
+                    }
+                    case 2: {
+                        op[j] = "*";
+                        break;
+                    }
+                    case 3: {
+                        op[j] = "÷";
                         break;
                     }
                 }
             }
+            String[] result = createFun(op, size).split("=");
+
+            //判重
+            if ((weWant.get(result[1]))!=null) {
+                String whoAreYou = weWant.get(result[1]);
+                int calChar =0;
+                for (int a=0;a<op.length;a++) {
+                    if (whoAreYou.contains(op[a]))
+                        calChar++;
+                }
+                if(calChar == op.length) {
+                    StringBuilder sb = new StringBuilder(whoAreYou);
+                    while(sb.toString().contains("(")) {
+                        sb.deleteCharAt(sb.lastIndexOf("("));
+                    }
+                    while(sb.toString().contains(")")) {
+                        sb.deleteCharAt(sb.lastIndexOf(")"));
+                    }
+
+                    StringBuilder sb2 = new StringBuilder(result[0]);
+                    while(sb2.toString().contains("(")) {
+                        sb2.deleteCharAt(sb2.lastIndexOf("("));
+                    }
+                    while(sb2.toString().contains(")")) {
+                        sb2.deleteCharAt(sb2.lastIndexOf(")"));
+                    }
+
+                    String[] numArr1 = sb.toString().split("[\\+\\-\\*\\÷]");
+                    String numArr2 = Arrays.toString(sb2.toString().split("[\\+\\-\\*\\÷]"));
+                    int xxx=0;
+                    for (int b = 0;b<numArr1.length;b++) {
+                        if(numArr2.contains(numArr1[b])) {
+                            xxx++;
+                        }
+                    }
+                    if(xxx==numArr1.length) {
+                        continue;
+                    }
+                }
+            }
+            weWant.put(result[1], result[0]);
+            System.out.println(result[0] + "=" + result[1]);
         }
-        for (String s : op) {
-            switch (s) {
+        return weWant;
+    }
+
+    public static String createFun(String[] op, int size) {
+        StringBuffer suanShi = new StringBuffer();
+        //确定符号数
+        int length = op.length;
+        //初始化结果为0
+        Fraction result = new Fraction(0, 1);
+        for (String c : op) {
+            switch (c) {
                 case "+": {
-                    result = xo(suanShi,"+",result);
-                    tempSuanShi = suanShi.toString();
+                    if (suanShi.length() > 0 && suanShi != null) {
+                        Fraction c1 = createFra(size);
+                        result = result.add(c1);
+                        if ((suanShi.toString().contains("*") || suanShi.toString().contains("÷")) && (int) (Math.random() * 2) == 0 && length == 2) {
+                            suanShi.insert(0, c1.getFraction() + "+");
+                        } else if (suanShi.toString().contains("*") && suanShi.toString().contains("÷") && (int) Math.random() * 3 == 0) {
+                            suanShi.insert(0, c1.getFraction() + "+");
+                        } else {
+                            if (length == 3 && suanShi.toString().contains("÷") && op[0] == "-") {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                            }
+                            suanShi.append("+" + c1.getFraction());
+                        }
+                    } else {
+                        Fraction a = createFra(size);
+                        Fraction b = createFra(size);
+                        result = a.add(b);
+                        suanShi.append(a.getFraction() + "+" + b.getFraction());
+                    }
                     break;
                 }
                 case "-": {
-                    result = xo(suanShi,"-",result);
-                    tempSuanShi = suanShi.toString();
+                    if (suanShi.length() > 0 && suanShi != null) {
+                        Fraction c1 = createFra(size);
+                        boolean flag = whoBig(result, c1);
+                        if (flag) {
+                            result = c1.sub(result);
+                        } else {
+                            result = result.sub(c1);
+                        }
+
+                        if ((flag && suanShi.toString().contains("*") || suanShi.toString().contains("÷")) && (int) (Math.random() * 3) == 0 && (length == 2 || length == 3)) {
+                            if (length == 3 && (suanShi.toString().contains("*") || suanShi.toString().contains("÷")) && op[1] == "+") {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                            }
+                            suanShi.insert(0, c1.getFraction() + "-");
+                        } else if (flag && suanShi.toString().contains("*") && suanShi.toString().contains("÷") && (int) (Math.random() * 3) == 0) {
+                            if (length == 3 && (suanShi.toString().contains("*") || suanShi.toString().contains("÷")) && op[1].equals("+")) {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                            }
+                            suanShi.insert(0, c1.getFraction() + "-");
+                        } else {
+                            if (flag) {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                                suanShi.insert(0, c1.getFraction() + "-");
+                            } else {
+                                suanShi.append("-" + c1.getFraction());
+                            }
+                        }
+                        if (length == 3 && op[1].equals("-") && (op[2].equals("*") || op[2].equals("÷"))) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+                    } else {
+                        Fraction a = createFra(size);
+                        Fraction b = createFra(size);
+                        if (whoBig(a, b)) {
+                            result = b.sub(a);
+                            suanShi.append(b.getFraction() + "-" + a.getFraction());
+                        } else {
+                            result = a.sub(b);
+                            suanShi.append(a.getFraction() + "-" + b.getFraction());
+                        }
+                    }
+                    break;
+                }
+                case "*": {
+                    if (suanShi.length() > 0 && suanShi != null) {
+                        Fraction c1 = createFra(size);
+                        result = result.mul(c1);
+                        if (length == 3 && (op[0].equals("+") || op[0].equals("-")) && (op[1].equals("+") || op[1].equals("-")) && !suanShi.toString().contains("(")) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        } else {
+                            if ((length == 2 || length == 3) && ((suanShi.toString().contains("+") || suanShi.toString().contains("-"))) && !suanShi.toString().contains("(")) {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                            }
+                            if (length == 3 && (suanShi.toString().contains("÷") && (suanShi.toString().contains("+") || suanShi.toString().contains("-"))) && !suanShi.toString().contains("((") && op[0] != "*") {
+                                suanShi.insert(0, "(");
+                                suanShi.insert(suanShi.length(), ")");
+                            }
+                        }
+                        suanShi.append("*" + c1.getFraction());
+                    } else {
+                        Fraction a = createFra(size);
+                        Fraction b = createFra(size);
+                        result = a.mul(b);
+                        suanShi.append(a.getFraction() + "*" + b.getFraction());
+                    }
+                    break;
+                }
+                case "÷": {
+                    if (suanShi.length() > 0 && suanShi != null) {
+                        Fraction c1 = createFra(size);
+                        while (c1.getNumerator() == 0) {
+                            c1 = createFra(size);
+                        }
+                        result = result.div(c1);
+                        if ((length == 3 && (op[0].equals("+") || op[0].equals("-")) && (op[1].equals("+") || op[1].equals("-")) && !suanShi.toString().contains("("))) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+
+                        if ((length == 2 || length == 3) && (suanShi.toString().contains("+") || suanShi.toString().contains("-")) && (suanShi.toString().contains("*") && suanShi.toString().contains("÷"))) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+                        if (length == 3 && (suanShi.toString().contains("*")) && ((suanShi.toString().contains("+") || suanShi.toString().contains("-"))) && !suanShi.toString().contains("((") && !op[0].equals("*")) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+                        if (length == 3 && (suanShi.toString().contains("+") || suanShi.toString().contains("-")) && (op[2].equals("-") || op[2].equals("+"))) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+                        if (length == 3 && op[1].equals("÷") && (op[0].equals("+") || op[0].equals("-"))) {
+                            suanShi.insert(0, "(");
+                            suanShi.insert(suanShi.length(), ")");
+                        }
+                        suanShi.append("÷" + c1.getFraction());
+                    } else {
+                        Fraction a = createFra(size);
+                        Fraction b = createFra(size);
+                        while (b.getNumerator() == 0) {
+                            b = createFra(size);
+                        }
+                        result = a.div(b);
+                        suanShi.append(a.getFraction() + "÷" + b.getFraction());
+                    }
                     break;
                 }
             }
         }
 
-        if(result.contains("'")) {
-            if(result.split("'")[1].split("/")[0].equals("0")) {
-                result = 0+"";
-            }
-        }else if(result.contains("/")){
-            if(result.split("/")[0].equals("0")) {
-                result = 0+"";
-            }
-        }
-        System.out.println("生成的算式为："+suanShi.toString()+"="+result);
+        return suanShi.append("=" + (result.getNumerator() == 0 ? 0 : result.getFraction())).toString();
     }
 
-    public String createFenShu() {
-        String temp;
-        int a = (int) (Math.random() * 100);
-        int b = (int) (Math.random() * 100);
-        while (a==0 && b==0) {
-             a = (int) (Math.random() * 100);
-             b = (int) (Math.random() * 100);
+    private static boolean whoBig(Fraction l, Fraction r) {
+
+        boolean flag = false;
+        if (l.getNumerator() * r.getDenominator() < l.getDenominator() * r.getNumerator()) {
+            flag = true;
         }
-        if(a>b) {
-          int zheng  = a/b;
-          int fenzi = a%b;
-          if(fenzi != 0) {
-              temp = zheng+"'"+fenzi+"/"+b;
-          }else {
-              temp = zheng+"";
-          }
-        }
-        else {
-            temp = a+ "/" +b;
-        }
-        if(a==0 && b!=0) {
-            temp = 0+"";
-        }
-        return temp;
+        return flag;
     }
 
-    public String calFenShu(String fen1,String fen2,String op) {
-        if(fen1.contains("'")) {
-           String[] temp = fen1.split("'");
-           fen1  = (Integer.parseInt(temp[0])*Integer.parseInt(temp[1].split("/")[1])+Integer.parseInt(temp[1].split("/")[0]))+"/"+(Integer.parseInt(temp[1].split("/")[1]));
-        }
-        if(fen2.contains("'")) {
-            String[] temp = fen2.split("'");
-            fen2  = (Integer.parseInt(temp[0])*Integer.parseInt(temp[1].split("/")[1])+Integer.parseInt(temp[1].split("/")[0]))+"/"+(Integer.parseInt(temp[1].split("/")[1]));
-        }
-        String[] f1 = fen1.split("/");
-        String[] f2 = fen2.split("/");
-        String result = "";
-        switch (op) {
-            case "+": {
-                 int tempFenZi = Integer.parseInt(f1[0])*Integer.parseInt(f2[1]) + Integer.parseInt(f2[0])*Integer.parseInt(f1[1]);
-                 int tempFenMu = Integer.parseInt(f1[1])*Integer.parseInt(f2[1]);
-                 result = zuhe(tempFenZi,tempFenMu);
-                 break;
-            }
-            case "-": {
-                int tempFenZi = Integer.parseInt(f1[0])*Integer.parseInt(f2[1]) - Integer.parseInt(f2[0])*Integer.parseInt(f1[1]);
-                int tempFenMu = Integer.parseInt(f1[1])*Integer.parseInt(f2[1]);
-                result = zuhe(tempFenZi,tempFenMu);
-                break;
-            }
-            case "*": {
-                int tempFenZi = Integer.parseInt(f1[0])*Integer.parseInt(f2[0]);
-                int tempFenMu = Integer.parseInt(f1[1])*Integer.parseInt(f2[1]);
-                result = zuhe(tempFenZi,tempFenMu);
-                break;
-            }
-            case "÷": {
-                int tempFenZi = Integer.parseInt(f1[0])*Integer.parseInt(f2[1]);
-                int tempFenMu = Integer.parseInt(f1[1])*Integer.parseInt(f2[0]);
-                result = zuhe(tempFenZi,tempFenMu);
-                break;
-            }
-         }
-         return result;
+    public void whoZero(Fraction l, Fraction r) {
     }
 
-    private String zuhe(int tempFenZi,int tempFenMu) {
-        String result="";
-        if(tempFenZi > tempFenMu) {
-            int zheng = tempFenZi/tempFenMu;
-            int yv = tempFenZi%tempFenMu;
-            if(yv==0) {
-                result = zheng+"";
-            }else {
-                result = zheng+"'"+yv+"/"+tempFenMu;
-            }
-        }else {
-            result = tempFenZi+ "/"+tempFenMu;
-        }
-        return result;
-    }
-
-    private String xo(StringBuffer suanShi,String op,String r) {
-        String result=r;
-        if (suanShi.length() > 0 && suanShi != null && !(suanShi.toString().equals(""))) {
-            if((int)(Math.random()*3) == 0) {
-                //随机数如果为0，则代表生成的是分数
-                String cfen = createFenShu();
-                if(result.contains("/")) {
-                    //result是分数
-                    result = calFenShu(result,cfen,op);
-                }else {
-                    //result不是分数
-                    result = calFenShu(result+"/"+1,cfen,op);
-                }
-                suanShi.append(op+cfen);
-            } else {
-                int c = (int) (Math.random() * 100);
-                if(result.contains("/")) {
-                    //result是分数
-                    result = calFenShu(result,c+"/"+1,op);
-                }else {
-                    //result不是分数
-                    result = calFenShu(result+"/"+1,c+"/"+1,op);
-                }
-                suanShi.append(op + c);
-            }
+    private static Fraction createFra(int size) {
+        if ((int) (Math.random() * 3) == 10) {
+            return new Fraction((int) (Math.random() * size), (int) (Math.random() * size) + 2);
         } else {
-            if((int)(Math.random()*3) == 0) {
-                String afen = createFenShu();
-                String bfen = "";
-                if((int)(Math.random()*3) == 0) {
-                    //bfen是分数
-                    bfen = createFenShu();
-                    result = calFenShu(afen,bfen,op);
-                } else {
-                    //bfen是整数
-                    bfen = (int)(Math.random()*100)+"";
-                    result = calFenShu(afen,bfen+"/"+1,op);
-                }
-                suanShi.append(afen + op + bfen);
-            } else {
-                int a = (int) (Math.random() * 100);
-                String b="";
-                if((int)(Math.random()*3) == 0) {
-                    //b是分数
-                    b = createFenShu();
-                    result = calFenShu(a+"/"+1,b,op);
-                } else{
-                    b = (int) (Math.random() * 100)+"";
-                    result = a*Integer.parseInt(b)+"";
-                }
-                suanShi.append(a + op + b);
-            }
+            return new Fraction((int) (Math.random() * size), 1);
         }
-        return result;
     }
 }

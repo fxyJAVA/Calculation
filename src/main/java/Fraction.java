@@ -1,12 +1,15 @@
 public class Fraction {
-	private int numerator;
-	private int denominator;
+	private int numerator;//分子
+	private int denominator;//分母
 
 	public Fraction(int a,int b){
 		setNumeratorAndDenominator(a,b);
 	}
 	public void setNumeratorAndDenominator(int a, int b){  // 设置分子和分母
-		int c = largestCommonDivisor(a, b);         // 计算最大公约数
+		int c = 1;
+		if(a!=0) {
+			c = largestCommonDivisor(a, b);// 计算最大公约数
+		}
 		numerator = a / c;
 		denominator = b / c;
 	}
@@ -81,5 +84,7 @@ public class Fraction {
 		Fraction result = new Fraction(newNumerator,newDenominator);
 		return result;
 	}
+
+
 
 }
