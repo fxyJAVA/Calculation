@@ -1,7 +1,6 @@
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Map;
 
 public class Test {
 
@@ -87,16 +86,16 @@ public class Test {
 
     @org.junit.Test
     public void testCreateSuanShi() {
-        Utils utils = new Utils();
-        Map<String,String> map = Utils.createSuanShi(10,1);
-        System.out.println(map.size());
-        for (Object entry : map.entrySet()) {
-            Map.Entry<String, String> temp = (Map.Entry<String, String>) entry;
-            String key = temp.getKey();
-            String value = temp.getValue();
-            System.out.println(value+"="+key);
-        }
-//        FileUtils.creatFile(utils.createSuanShi(10,10));
+//        Utils utils = new Utils();
+//        Map<String,String> map = Utils.createSuanShi(10,1);
+//        System.out.println(map.size());
+//        for (Object entry : map.entrySet()) {
+//            Map.Entry<String, String> temp = (Map.Entry<String, String>) entry;
+//            String key = temp.getKey();
+//            String value = temp.getValue();
+//            System.out.println(value+"="+key);
+//        }
+        FileUtils.creatFile(Utils.createSuanShi(10000,100));
     }
 
 
@@ -110,7 +109,7 @@ public class Test {
     @org.junit.Test
     public void testCheck() {
         try {
-            FileUtils.check("D:\\Exercises@2018-09-29_17-25-05.txt","D:\\11.txt");
+            FileUtils.check("D:\\Exercises@2018-09-29_20-40-16.txt","D:\\MyAnswer.txt");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,33 +118,25 @@ public class Test {
     @org.junit.Test
     public void testMain(){
 //        main.main(new String[]{"-n", "10", "-r", "10"});
-        main.main(new String[]{"-e", "D:\\Exercises@2018-09-29_20-40-16.txt", "-a", "D:\\11.txt"});
-    }
-    @org.junit.Test
-    public void ttt(){
-        String s = "1.    20";
-        System.out.println(s.contains("."));
-        System.out.println(s.split("\\.").length);
-        System.out.println(s.split("\\.")[0]);
-		System.out.println(s.split("\\.")[1]);
+        main.main(new String[]{"-e", "D:\\Exercises@2018-09-29_20-40-16.txt", "-a", "D:\\MyAnswer.txt"});
     }
 
-    @org.junit.Test
-    public void ttt1() {
-        StringBuilder sb = new StringBuilder("(15+57)*12+85");
-        while(sb.toString().contains("(")) {
-            sb.deleteCharAt(sb.lastIndexOf("("));
-        }
-        while(sb.toString().contains(")")) {
-            sb.deleteCharAt(sb.lastIndexOf(")"));
-        }
-        System.out.println(sb.toString());
-//        String reg = "";
-//        String t = "1+2-3÷4*5";
-//        String s[] = t.split("[\\+\\-\\*\\÷]");
-//        for (String c:s) {
-//            System.out.println(c);
+//    @org.junit.Test
+//    public void ttt1() {
+//        StringBuilder sb = new StringBuilder("(15+57)*12+85");
+//        while(sb.toString().contains("(")) {
+//            sb.deleteCharAt(sb.lastIndexOf("("));
 //        }
-//        System.out.println(Arrays.toString(s));
-    }
+//        while(sb.toString().contains(")")) {
+//            sb.deleteCharAt(sb.lastIndexOf(")"));
+//        }
+//        System.out.println(sb.toString());
+////        String reg = "";
+////        String t = "1+2-3÷4*5";
+////        String s[] = t.split("[\\+\\-\\*\\÷]");
+////        for (String c:s) {
+////            System.out.println(c);
+////        }
+////        System.out.println(Arrays.toString(s));
+//    }
 }

@@ -237,9 +237,6 @@ public class Utils {
         return flag;
     }
 
-    public void whoZero(Fraction l, Fraction r) {
-    }
-
     private static Fraction createFra(int size) {
         if ((int) (Math.random() * 3) == 0) {
             return new Fraction((int) (Math.random() * size + 1), (int) (Math.random() * size) + 2);
